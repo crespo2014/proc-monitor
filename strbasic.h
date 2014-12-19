@@ -45,7 +45,7 @@ class strRowSplit
                 return _chartype::end_col;
             if (*data_ == end_row_)
                 return _chartype::end_row;
-            if (*data_ == ' ' && trimspaces_)
+            if (*data_ <= ' ' && trimspaces_)
                 *data_ = 0;
             data_++;
         }
@@ -53,7 +53,7 @@ class strRowSplit
     }
     void skipSpaces()
     {
-        while (skipspace_ && *data_ == ' ')
+        while (skipspace_ && *data_ <= ' ')
             ++data_;
     }
 public:

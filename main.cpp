@@ -8,14 +8,23 @@
 
 #include "strbasic.h"
 #include <iostream>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 int main()
 {
-    char str1[] = "   isasdjs  .     slkdlsl   .sds .....\n1 .2 .3 .4......\n5.6.7.8.9........";
+    char f[1024];
 
-    strRowColumnSplit<2,3> rc_str(str1,'.','\n');
+    auto fd = ::open("/proc/self/status",O_RDONLY);
 
-    strRowSplit<3> str(str1,'.','\n');
+    auto len = ::read(fd,f,sizeof(f));
+    f[len] = 0;
+    close(fd);
+
+    strRowColumnSplit<15,2> rc_str(f,':','\n');
+
+    strRowSplit<3> str(f,'.','\n');
     while (str.next())
     {
         std::cout << str.get(0) << std::endl;
