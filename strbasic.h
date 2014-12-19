@@ -10,6 +10,9 @@
 
 #include <cctype>
 #include <cstring>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 /**
  * String Iterator use to extract information in column mode
@@ -94,7 +97,8 @@ public:
         do
         {
             type_ = nextToken();
-            if (type_ == _chartype::end_str) break;
+            if (type_ == _chartype::end_str)
+                break;
             if (type_ == _chartype::end_row)
                 *data_ = 0;
             data_++;
@@ -103,7 +107,7 @@ public:
     }
     const char* get(unsigned pos)
     {
-        if (pos >= C+1)
+        if (pos >= C + 1)
             return "";
         return col[pos];
     }
@@ -116,7 +120,7 @@ public:
 template<int R, int C>
 class strRowColumnSplit
 {
-    const char* rc_[(R + 1)*(C + 1)];
+    const char* rc_[(R + 1) * (C + 1)];
     void clear()
     {
         for (const char** p = rc_; p < rc_ + (R + 1) * (C + 1); ++p)
@@ -131,18 +135,26 @@ public:
         while (row < R && str.next())
         {
             for (unsigned i = 0; i < C + 1; i++)
-                rc_[row*(C+1)+i] = str.get(i);
+                rc_[row * (C + 1) + i] = str.get(i);
             row++;
         }
-        rc_[row*(C+1)] = str.getRemainder();
+        rc_[row * (C + 1)] = str.getRemainder();
     }
     const char* get(unsigned r, unsigned c)
     {
         if ((r >= R + 1) || (c >= C + 1))
             return "";
-        return rc_[r*(C+1)+c];
+        return rc_[r * (C + 1) + c];
     }
-
 };
+
+void loadfile(const char* file, char* buffer, size_t max)
+{
+    auto fd = ::open("/proc/self/status", O_RDONLY);
+
+    auto len = ::read(fd, buffer, max);
+    buffer[len] = 0;
+    close(fd);
+}
 
 #endif /* STRBASIC_H_ */
