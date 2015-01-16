@@ -21,11 +21,12 @@ int main()
 {
     ProcessInfo self(getpid());
 
-    std::vector<const char*> names { "utime", "VmPeak" };
+    std::vector<const char*> names { "utime", "VmPeak","stime"};
     for (auto nm : names)
     {
         self.addItem(nm);
     }
+    self.bindAll();
     self.printHeader(std::cout);
     //Running
     while (true)

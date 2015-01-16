@@ -60,6 +60,7 @@ void ProcessInfo::bindAll()
 
 void ProcessInfo::printHeader(std::ostream& os)
 {
+    bindAll();
     auto it = active_items.begin();
     if (it != active_items.end())
         os << (*it)->getName();

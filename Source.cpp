@@ -61,7 +61,7 @@ const char* MemSource::items_[] = { "FDSize", "VmPeak", "VmSize", "VmLck", "VmPi
         "voluntary_ctxt_switches", "Mems_allowed_list", "Mems_allowed", "Cpus_allowed_list", "Cpus_allowed", nullptr };
 
 MemSource::MemSource() :
-        iSource(source_e::mem, proc_file_s), data_(' ')
+        iSource(source_e::mem, proc_file_s), data_(':')
 {
 
 }
@@ -86,6 +86,10 @@ void MemSource::getItems(std::vector<Item>& v)
 
 void MemSource::load()
 {
+    data_.reset(loadFile());
+    do
+    {
+    } while (data_.next());
 }
 
 const char* IOSource::items_[] = { "rchar", "wchar", "syscr", "syscw", "read_bytes", "write_bytes", "cancelled_write_bytes", nullptr };
@@ -114,4 +118,8 @@ void IOSource::getItems(std::vector<Item>& v)
 
 void IOSource::load()
 {
+    data_.reset(loadFile());
+    do
+    {
+    } while (data_.next());
 }
