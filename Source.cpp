@@ -57,11 +57,11 @@ char* iSource::loadFile()
     return raw_;
 }
 
-const char* MemSource::items_[] = { "A", "B", nullptr };
-
+const char* MemSource::items_[] = { "FDSize", "VmPeak", "VmSize", "VmLck", "VmPin", "VmHWM", "VmRSS", "VmData", "VmStk", "VmExe", "VmLib", "VmPTE", "VmSwap", "Threads", "nonvoluntary_ctxt_switches",
+        "voluntary_ctxt_switches", "Mems_allowed_list", "Mems_allowed", "Cpus_allowed_list", "Cpus_allowed", nullptr };
 
 MemSource::MemSource() :
-        iSource(source_e::mem, proc_file_s),data_(' ')
+        iSource(source_e::mem, proc_file_s), data_(' ')
 {
 
 }
@@ -88,8 +88,9 @@ void MemSource::load()
 {
 }
 
+const char* IOSource::items_[] = { "rchar", "wchar", "syscr", "syscw", "read_bytes", "write_bytes", "cancelled_write_bytes", nullptr };
 IOSource::IOSource() :
-        iSource(source_e::io, proc_file_s) ,data_(' ')
+        iSource(source_e::io, proc_file_s), data_(':')
 {
 }
 

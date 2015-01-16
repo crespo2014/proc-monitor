@@ -118,7 +118,7 @@ private:
 class CPUSource: public iSource
 {
     static const unsigned item_count = 52;
-    const char* proc_file_s = "stat";
+    constexpr static const char* proc_file_s = "stat";
     strRowSplit<item_count + 1> data_;
     static const char* items_[item_count + 1];
 public:
@@ -135,28 +135,22 @@ class MemSource: public iSource
 {
     static const unsigned item_count = 50;
     static const char* items_[item_count];
-    const char* proc_file_s = "status";
+    constexpr static const char* proc_file_s = "status";
     strRowColumnSplit<item_count, 3> data_;
 public:
     MemSource();
     virtual const char* const * get(const char* name);
     virtual void getItems(std::vector<Item>& v);
     virtual void load();
-    virtual ~MemSource(){}
+    virtual ~MemSource()
+    {
+    }
 };
-/*
- * rchar: 1299
- wchar: 0
- syscr: 7
- syscw: 0
- read_bytes: 0
- write_bytes: 0
- cancelled_write_bytes: 0
- */
+
 class IOSource: public iSource
 {
-    static const unsigned item_count = 10;
-    const char* proc_file_s = "io";
+    static const unsigned item_count = 30;
+    constexpr static const char* proc_file_s = "io";
     strRowColumnSplit<item_count, 3> data_;
     static const char* items_[item_count];
 public:
@@ -164,7 +158,9 @@ public:
     virtual const char* const * get(const char* name);
     virtual void getItems(std::vector<Item>& v);
     virtual void load();
-    virtual ~IOSource(){}
+    virtual ~IOSource()
+    {
+    }
 };
 
 #endif /* SOURCE_H_ */

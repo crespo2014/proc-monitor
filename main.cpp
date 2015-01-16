@@ -15,71 +15,22 @@
 #include "Source.h"
 #include "Item.h"
 
+#include "ProcessInfo.h"
+
 int main()
 {
-    CPUSource cpu_src;
+    ProcessInfo self(getpid());
 
-    std::vector<std::pair<bool, iSource*> > sources { { false, &cpu_src } };
-    std::vector<Item> items;
-    for (auto p : sources)
+    std::vector<const char*> names { "utime", "VmPeak" };
+    for (auto nm : names)
     {
-        p.second->getItems(items);
+        self.addItem(nm);
     }
-    std::list<Item*> active_items;
-    std::list<iSource*> active_sources;
-
-    // Initialization
-    const char* name = "utime";
-    Item* ni = nullptr;
-    for (auto &i : items)
-    {
-        if (strcmp(i.getName(),name) == 0)
-        {
-            ni = &i;
-            break;
-        }
-    }
-    if (ni == nullptr) return 0;
-
-    for (auto p : sources)
-    {
-        if (p.second->getType() == ni->getSource().getType())
-        {
-            if (!p.first)
-                active_sources.push_back(p.second);
-            p.first = true;
-            break;
-        }
-    }
-    active_items.push_back(ni);
-
-    //Pre Running
-    cpu_src.bind("self");
-    for (auto p : active_sources)
-    {
-        p->load();
-    }
-    for (auto i : active_items)
-    {
-        i->bind();
-    }
-
+    self.printHeader(std::cout);
     //Running
     while (true)
     {
-        auto it = active_items.begin();
-        if (it != active_items.end())
-            std::cout << (*it)->get();
-        ++it;
-
-        for (; it != active_items.end(); ++it)
-        {
-            std::cout << ";" << (*it)->get();   //todo define separator as const
-        }
-        std::cout << std::endl;
-        for (auto p : active_sources)
-        {
-            p->load();
-        }
+        self.load();
+        self.printItems(std::cout);
     }
 }
