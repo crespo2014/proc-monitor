@@ -24,14 +24,22 @@ public:
         cpu,   // cpu
         mem  // memory
     };
-    iSource(source_e type) :
-            type_(type)
+    iSource(source_e type, const char* proc_file) :
+            type_(type), proc_file_name_(proc_file)
     {
 
     }
-    virtual const char* const* get(const char* name) = 0;
+    virtual const char* const * get(const char* name) = 0;
     virtual void load() = 0;
     virtual void getItems(std::vector<Item>& v) = 0;
+
+    template<class T>
+    void bind(T pid)
+    {
+        std::stringstream ss;
+        ss << "/proc/" << pid << "/" << proc_file_name_;
+        file_path_ = ss.str();
+    }
     source_e getType() const
     {
         return type_;
@@ -40,8 +48,16 @@ protected:
     ~iSource()
     {
     }
-    ;
+    void setFilePath(const std::string& fp)
+    {
+        file_path_ = fp;
+    }
+    char* loadFile();
+    std::string file_path_;
     source_e type_;
+    char raw_[2 * 1024];
+private:
+    const char* proc_file_name_;
 };
 
 /**
@@ -77,128 +93,78 @@ protected:
  *     (29) kstkesp  %lu
  *     (30) kstkeip  %lu
  *     (31) signal  %lu
- The bitmap of pending signals, displayed as a
- decimal number.  Obsolete, because it does not
- provide information on real-time signals; use
- /proc/[pid]/status instead.
-
- (32) blocked  %lu
- The bitmap of blocked signals, displayed as a
- decimal number.  Obsolete, because it does not
- provide information on real-time signals; use
- /proc/[pid]/status instead.
-
- (33) sigignore  %lu
- The bitmap of ignored signals, displayed as a
- decimal number.  Obsolete, because it does not
- provide information on real-time signals; use
- /proc/[pid]/status instead.
-
- (34) sigcatch  %lu
- The bitmap of caught signals, displayed as a decimal
- number.  Obsolete, because it does not provide
- information on real-time signals; use
- /proc/[pid]/status instead.
-
- (35) wchan  %lu
- This is the "channel" in which the process is
- waiting.  It is the address of a location in the
- kernel where the process is sleeping.  The
- corresponding symbolic name can be found in
- /proc/[pid]/wchan.
-
- (36) nswap  %lu
- Number of pages swapped (not maintained).
-
- (37) cnswap  %lu
- Cumulative nswap for child processes (not
- maintained).
-
- (38) exit_signal  %d  (since Linux 2.1.22)
- Signal to be sent to parent when we die.
-
- (39) processor  %d  (since Linux 2.2.8)
- CPU number last executed on.
-
- (40) rt_priority  %u  (since Linux 2.5.19)
- Real-time scheduling priority, a number in the range
- 1 to 99 for processes scheduled under a real-time
- policy, or 0, for non-real-time processes (see
- sched_setscheduler(2)).
-
- (41) policy  %u  (since Linux 2.5.19)
- Scheduling policy (see sched_setscheduler(2)).
- Decode using the SCHED_* constants in linux/sched.h.
-
- The format for this field was %lu before Linux
- 2.6.22.
-
- (42) delayacct_blkio_ticks  %llu  (since Linux 2.6.18)
- Aggregated block I/O delays, measured in clock ticks
- (centiseconds).
-
- (43) guest_time  %lu  (since Linux 2.6.24)
- Guest time of the process (time spent running a
- virtual CPU for a guest operating system), measured
- in clock ticks (divide by sysconf(_SC_CLK_TCK)).
-
- (44) cguest_time  %ld  (since Linux 2.6.24)
- Guest time of the process's children, measured in
- clock ticks (divide by sysconf(_SC_CLK_TCK)).
-
- (45) start_data  %lu  (since Linux 3.3)
- Address above which program initialized and
- uninitialized (BSS) data are placed.
-
- (46) end_data  %lu  (since Linux 3.3)
- Address below which program initialized and
- uninitialized (BSS) data are placed.
-
- (47) start_brk  %lu  (since Linux 3.3)
- Address above which program heap can be expanded
- with brk(2).
-
- (48) arg_start  %lu  (since Linux 3.5)
- Address above which program command-line arguments
- (argv) are placed.
-
- (49) arg_end  %lu  (since Linux 3.5)
- Address below program command-line arguments (argv)
- are placed.
-
- (50) env_start  %lu  (since Linux 3.5)
- Address above which program environment is placed.
-
- (51) env_end  %lu  (since Linux 3.5)
- Address below which program environment is placed.
-
- (52) exit_code  %d  (since Linux 3.5)
- The thread's exit status in the form reported by
- waitpid(2).
+ *     (32) blocked  %lu
+ *     (33) sigignore  %lu
+ *     (34) sigcatch  %lu
+ *     (35) wchan  %lu
+ *     (36) nswap  %lu
+ *     (37) cnswap  %lu
+ *     (38) exit_signal  %d  (since Linux 2.1.22)
+ *     (39) processor  %d  (since Linux 2.2.8)
+ *     (40) rt_priority  %u  (since Linux 2.5.19)
+ *     (41) policy  %u  (since Linux 2.5.19)
+ *     (42) delayacct_blkio_ticks  %llu  (since Linux 2.6.18)
+ *     (43) guest_time  %lu  (since Linux 2.6.24)
+ *     (44) cguest_time  %ld  (since Linux 2.6.24)
+ *     (45) start_data  %lu  (since Linux 3.3)
+ *     (46) end_data  %lu  (since Linux 3.3)
+ *     (47) start_brk  %lu  (since Linux 3.3)
+ *     (48) arg_start  %lu  (since Linux 3.5)
+ *     (49) arg_end  %lu  (since Linux 3.5)
+ *     (50) env_start  %lu  (since Linux 3.5)
+ *     (51) env_end  %lu  (since Linux 3.5)
+ *     (52) exit_code  %d  (since Linux 3.5)
  */
 class CPUSource: public iSource
 {
     static const unsigned item_count = 52;
-    std::string file_;
-    char raw_[1024];
+    const char* proc_file_s = "stat";
     strRowSplit<item_count + 1> data_;
-    static const char* items_[item_count];
+    static const char* items_[item_count + 1];
 public:
     CPUSource();
-    void bindPid(unsigned pid);
-    virtual const char* const* get(const char* name);
+    virtual const char* const * get(const char* name);
     virtual void getItems(std::vector<Item>& v);
     virtual void load();
     virtual ~CPUSource()
     {
     }
-    template<class T>
-    void bind(T pid)
-    {
-        std::stringstream ss;
-        ss << "/proc/" << pid << "/stat";
-        file_ = ss.str();
-    }
+};
+
+class MemSource: public iSource
+{
+    static const unsigned item_count = 50;
+    static const char* items_[item_count];
+    const char* proc_file_s = "status";
+    strRowColumnSplit<item_count, 3> data_;
+public:
+    MemSource();
+    virtual const char* const * get(const char* name);
+    virtual void getItems(std::vector<Item>& v);
+    virtual void load();
+    virtual ~MemSource(){}
+};
+/*
+ * rchar: 1299
+ wchar: 0
+ syscr: 7
+ syscw: 0
+ read_bytes: 0
+ write_bytes: 0
+ cancelled_write_bytes: 0
+ */
+class IOSource: public iSource
+{
+    static const unsigned item_count = 10;
+    const char* proc_file_s = "io";
+    strRowColumnSplit<item_count, 3> data_;
+    static const char* items_[item_count];
+public:
+    IOSource();
+    virtual const char* const * get(const char* name);
+    virtual void getItems(std::vector<Item>& v);
+    virtual void load();
+    virtual ~IOSource(){}
 };
 
 #endif /* SOURCE_H_ */

@@ -11,15 +11,8 @@
 #include "Source.h"
 
 CPUSource::CPUSource() :
-        iSource(source_e::cpu), data_(' ')
+        iSource(source_e::cpu, proc_file_s), data_(' ')
 {
-}
-
-void CPUSource::bindPid(unsigned pid)
-{
-    std::stringstream ss;
-    ss << "/proc/" << pid << "/stat";
-    file_ = ss.str();
 }
 
 const char* const * CPUSource::get(const char* name)
@@ -41,11 +34,7 @@ const char* CPUSource::items_[] = { "pid", "name", "state", "ppid", "pgrp", "ses
 
 void CPUSource::load()
 {
-    auto fd = ::open(file_.c_str(), O_RDONLY);
-    auto len = ::read(fd, raw_, sizeof(raw_));
-    raw_[len] = 0;
-    close(fd);
-    data_.reset(raw_);
+    data_.reset(loadFile());
     do
     {
     } while (data_.next());
@@ -57,4 +46,71 @@ void CPUSource::getItems(std::vector<Item>& v)
     {
         v.push_back(Item(*it, *this));
     }
+}
+
+char* iSource::loadFile()
+{
+    auto fd = ::open(file_path_.c_str(), O_RDONLY);
+    auto len = ::read(fd, raw_, sizeof(raw_) - 1);
+    close(fd);
+    raw_[len] = 0;
+    return raw_;
+}
+
+const char* MemSource::items_[] = { "A", "B", nullptr };
+
+
+MemSource::MemSource() :
+        iSource(source_e::mem, proc_file_s),data_(' ')
+{
+
+}
+
+const char* const * MemSource::get(const char* name)
+{
+    for (unsigned i = 0; i < item_count; ++i)
+    {
+        if (strcmp(data_.get(i, 0), name) == 0)
+            return data_.getRawPointer(i, 1);
+    }
+    return nullptr;
+}
+
+void MemSource::getItems(std::vector<Item>& v)
+{
+    for (const char** it = items_; *it != nullptr; ++it)
+    {
+        v.push_back(Item(*it, *this));
+    }
+}
+
+void MemSource::load()
+{
+}
+
+IOSource::IOSource() :
+        iSource(source_e::io, proc_file_s) ,data_(' ')
+{
+}
+
+const char* const * IOSource::get(const char* name)
+{
+    for (unsigned i = 0; i < item_count; ++i)
+    {
+        if (strcmp(data_.get(i, 0), name) == 0)
+            return data_.getRawPointer(i, 1);
+    }
+    return nullptr;
+}
+
+void IOSource::getItems(std::vector<Item>& v)
+{
+    for (const char** it = items_; *it != nullptr; ++it)
+    {
+        v.push_back(Item(*it, *this));
+    }
+}
+
+void IOSource::load()
+{
 }

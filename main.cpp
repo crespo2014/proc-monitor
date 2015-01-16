@@ -15,15 +15,6 @@
 #include "Source.h"
 #include "Item.h"
 
-void loadfile(const char* file, char* buffer, size_t max)
-{
-    auto fd = ::open("/proc/self/status", O_RDONLY);
-
-    auto len = ::read(fd, buffer, max);
-    buffer[len] = 0;
-    close(fd);
-}
-
 int main()
 {
     CPUSource cpu_src;

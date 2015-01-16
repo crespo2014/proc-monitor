@@ -70,7 +70,7 @@ public:
     {
         data_ = data;
         type_ = _chartype::none;
-        for (int i=0;i<C+1;++i)
+        for (int i = 0; i < C + 1; ++i)
             col[i] = "";
     }
     void setSkipSpaces(bool b)
@@ -125,7 +125,7 @@ public:
         return data_;
     }
     // direct access to data
-    const char* const* getRawData() const
+    const char* const * getRawData() const
     {
         return col;
     }
@@ -134,18 +134,21 @@ public:
 template<int R, int C>
 class strRowColumnSplit
 {
-    const char* rc_[(R + 1) * (C + 1)];
-    void clear()
+public:
+    strRowColumnSplit(char endcol, char endrow = '\n') : end_col_(endcol), end_row_(endrow)
     {
+        reset(nullptr);
+    }
+    void reset(char *data)
+    {
+        data_ = data;
         for (const char** p = rc_; p < rc_ + (R + 1) * (C + 1); ++p)
             *p = "";
     }
-public:
-    strRowColumnSplit(char* data, char endcol, char endrow = '\n')
+    bool next()
     {
-        clear();
-        strRowSplit<C> str(endcol, endrow);
-        str.reset(data);
+        strRowSplit<C> str(end_col_, end_row_);
+        str.reset(data_);
         unsigned row = 0;
         while (row < R && str.next())
         {
@@ -154,6 +157,7 @@ public:
             row++;
         }
         rc_[row * (C + 1)] = str.getRemainder();
+        return false;
     }
     const char* get(unsigned r, unsigned c)
     {
@@ -161,8 +165,15 @@ public:
             return "";
         return rc_[r * (C + 1) + c];
     }
+    const char* const * getRawPointer(unsigned r, unsigned c) const
+    {
+        return &rc_[r * (C + 1) + c];
+    }
+private:
+    const char* rc_[(R + 1) * (C + 1)];
+    char * data_ = nullptr;
+    const char end_col_;    // column delimiter
+    const char end_row_;    // row delimiter
 };
-
-
 
 #endif /* STRBASIC_H_ */
