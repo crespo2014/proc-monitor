@@ -10,18 +10,36 @@
 #ifndef PROCSTAT_H_
 #define PROCSTAT_H_
 
-// source of data
-enum class data_source
-{
-    none,
-    io,     // io status
-    stat,   // cpu
-    status  // memory
-}
+#include <vector>
+
+
+
 enum class data_type
 {
 
-}
+};
+
+// todo make item auto read from source.
+// make source be able to read itself
+// prebuild lookat table for items.
+
+class procStat
+{
+    std::vector<data_source> srcs_;
+    // active inputs
+    // actived items
+public:
+    procStat(): srcs_(5) {}
+    void addSource(data_source s)
+    {
+        for (auto v : srcs_)
+        {
+            if (v == s) return;
+        }
+        srcs_.push_back(s);
+    }
+    void addItem();
+};
 
 
 

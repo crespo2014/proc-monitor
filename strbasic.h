@@ -28,10 +28,10 @@ class strRowSplit
     };
 
     const char* col[C + 1];
-    char * data_;
+    char * data_ = nullptr;
     const char end_col_;    // column delimiter
     const char end_row_;    // row delimiter
-    _chartype type_ = _chartype::none;    // las character type read
+    _chartype type_;    // las character type read
     bool skipspace_ = true;
     bool trimspaces_ = true;
 
@@ -60,9 +60,18 @@ class strRowSplit
             ++data_;
     }
 public:
-    strRowSplit(char* data, char endcol, char endrow = '\n') :
-            data_(data), end_col_(endcol), end_row_(endrow)
+    strRowSplit(char endcol, char endrow = '\n') :
+            end_col_(endcol), end_row_(endrow)
     {
+        reset(nullptr);
+        type_ = _chartype::end_str;
+    }
+    void reset(char *data)
+    {
+        data_ = data;
+        type_ = _chartype::none;
+        for (int i=0;i<C+1;++i)
+            col[i] = "";
     }
     void setSkipSpaces(bool b)
     {
@@ -115,6 +124,11 @@ public:
     {
         return data_;
     }
+    // direct access to data
+    const char* const* getRawData() const
+    {
+        return col;
+    }
 };
 
 template<int R, int C>
@@ -130,7 +144,8 @@ public:
     strRowColumnSplit(char* data, char endcol, char endrow = '\n')
     {
         clear();
-        strRowSplit<C> str(data, endcol, endrow);
+        strRowSplit<C> str(endcol, endrow);
+        str.reset(data);
         unsigned row = 0;
         while (row < R && str.next())
         {
@@ -148,13 +163,6 @@ public:
     }
 };
 
-void loadfile(const char* file, char* buffer, size_t max)
-{
-    auto fd = ::open("/proc/self/status", O_RDONLY);
 
-    auto len = ::read(fd, buffer, max);
-    buffer[len] = 0;
-    close(fd);
-}
 
 #endif /* STRBASIC_H_ */
