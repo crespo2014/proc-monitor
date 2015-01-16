@@ -36,7 +36,8 @@ const char* const * CPUSource::get(const char* name)
     return nullptr;
 }
 
-const char* CPUSource::items_[] = { "A", "B", "C", "D", nullptr };
+const char* CPUSource::items_[] = { "pid", "name", "state", "ppid", "pgrp", "session", "tty_nr", "tpgid", "flags", "minflt", "cminflt", "majflt", "cmajflt", "utime", "stime", "cutime", "cstime",
+        "priority", "nice", "num_threads", "itrealvalue", "starttime", "vsize", "rss", "rsslim", nullptr };
 
 void CPUSource::load()
 {
@@ -48,4 +49,12 @@ void CPUSource::load()
     do
     {
     } while (data_.next());
+}
+
+void CPUSource::getItems(std::vector<Item>& v)
+{
+    for (const char** it = items_; *it != nullptr; ++it)
+    {
+        v.push_back(Item(*it, *this));
+    }
 }

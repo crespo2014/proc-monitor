@@ -33,6 +33,10 @@ public:
     {
         return source_;
     }
+    const char* getName() const
+    {
+        return name_;
+    }
 };
 
 //class CharItem

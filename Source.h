@@ -10,7 +10,9 @@
 
 #include <sstream>
 #include <string>
+#include <vector>
 #include "strbasic.h"
+#include "Item.h"
 
 class iSource
 {
@@ -29,6 +31,7 @@ public:
     }
     virtual const char* const* get(const char* name) = 0;
     virtual void load() = 0;
+    virtual void getItems(std::vector<Item>& v) = 0;
     source_e getType() const
     {
         return type_;
@@ -175,7 +178,7 @@ protected:
  */
 class CPUSource: public iSource
 {
-    static const unsigned item_count = 20;
+    static const unsigned item_count = 52;
     std::string file_;
     char raw_[1024];
     strRowSplit<item_count + 1> data_;
@@ -184,6 +187,7 @@ public:
     CPUSource();
     void bindPid(unsigned pid);
     virtual const char* const* get(const char* name);
+    virtual void getItems(std::vector<Item>& v);
     virtual void load();
     virtual ~CPUSource()
     {

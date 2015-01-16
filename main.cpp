@@ -29,13 +29,26 @@ int main()
     CPUSource cpu_src;
 
     std::vector<std::pair<bool, iSource*> > sources { { false, &cpu_src } };
-    std::vector<Item> items { { "A", cpu_src } };
-
+    std::vector<Item> items;
+    for (auto p : sources)
+    {
+        p.second->getItems(items);
+    }
     std::list<Item*> active_items;
     std::list<iSource*> active_sources;
 
     // Initialization
-    Item* ni = &items[0];
+    const char* name = "utime";
+    Item* ni = nullptr;
+    for (auto &i : items)
+    {
+        if (strcmp(i.getName(),name) == 0)
+        {
+            ni = &i;
+            break;
+        }
+    }
+    if (ni == nullptr) return 0;
 
     for (auto p : sources)
     {
@@ -47,7 +60,7 @@ int main()
             break;
         }
     }
-    active_items.push_back(&items[0]);
+    active_items.push_back(ni);
 
     //Pre Running
     cpu_src.bind("self");
@@ -66,11 +79,13 @@ int main()
         auto it = active_items.begin();
         if (it != active_items.end())
             std::cout << (*it)->get();
+        ++it;
 
         for (; it != active_items.end(); ++it)
         {
             std::cout << ";" << (*it)->get();   //todo define separator as const
         }
+        std::cout << std::endl;
         for (auto p : active_sources)
         {
             p->load();
