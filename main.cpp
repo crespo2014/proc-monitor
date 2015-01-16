@@ -21,7 +21,7 @@ int main()
 {
     ProcessInfo self(getpid());
 
-    std::vector<const char*> names { "utime", "VmPeak","stime"};
+    std::vector<const char*> names { "utime", "VmPeak","stime","rchar","wchar"};
     for (auto nm : names)
     {
         self.addItem(nm);
