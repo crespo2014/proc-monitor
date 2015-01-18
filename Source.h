@@ -31,7 +31,7 @@ public:
     }
     virtual const char* const * get(const char* name) = 0;
     virtual void load() = 0;
-    virtual void getItems(std::vector<Item>& v) = 0;
+    virtual void getItems(std::vector<BaseItem>& v) = 0;
 
     template<class T>
     void bind(T pid)
@@ -124,7 +124,7 @@ class CPUSource: public iSource
 public:
     CPUSource();
     virtual const char* const * get(const char* name);
-    virtual void getItems(std::vector<Item>& v);
+    virtual void getItems(std::vector<BaseItem>& v);
     virtual void load();
     virtual ~CPUSource()
     {
@@ -140,7 +140,7 @@ class MemSource: public iSource
 public:
     MemSource();
     virtual const char* const * get(const char* name);
-    virtual void getItems(std::vector<Item>& v);
+    virtual void getItems(std::vector<BaseItem>& v);
     virtual void load();
     virtual ~MemSource()
     {
@@ -156,7 +156,7 @@ class IOSource: public iSource
 public:
     IOSource();
     virtual const char* const * get(const char* name);
-    virtual void getItems(std::vector<Item>& v);
+    virtual void getItems(std::vector<BaseItem>& v);
     virtual void load();
     virtual ~IOSource()
     {

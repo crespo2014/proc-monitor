@@ -24,7 +24,7 @@ ProcessInfo::~ProcessInfo()
 
 void ProcessInfo::addItem(const char* item_name)
 {
-    Item* ni = nullptr;
+    BaseItem* ni = nullptr;
     for (auto &it : all_items_)
     {
         if (strcmp(it.getName(), item_name) == 0)

@@ -12,42 +12,34 @@
 
 class iSource;
 
-class Item
+class iItem
 {
-    iSource& source_;
-    const char* name_;
-    const char* const* v = nullptr;
 public:
-    Item(const char* name, iSource& source) : source_(source),name_(name)
-    {
-
-    }
-    /// Get the index of the element in the source
-    void bind();
-    virtual ~Item() {}
-    const char *get()
-    {
-        return ((v != nullptr) && (*v != nullptr) ? *v : "");
-    }
-    iSource& getSource() const
-    {
-        return source_;
-    }
-    const char* getName() const
-    {
-        return name_;
-    }
+    virtual void bind() = 0;
+    virtual const char *get() const = 0;
+    virtual iSource& getSource() const = 0;
+    virtual const char* getName() const = 0;
+    virtual ~iItem() {};
 };
 
-//class CharItem
-//{
-//    const char** v = nullptr;
-//public:
-//    void bind(const char** b)
-//    {
-//        v = b;
-//    }
-//
-//};
+class BaseItem : public iItem
+{
+public:
+    BaseItem(const char* name, iSource& source);
+    /// Get pointer to value from source, read initial value
+    void bind() override ;
+    /// get current value as string
+    const char *get() const override ;
+    iSource& getSource() const override;
+    const char* getName() const override;
+    virtual ~BaseItem();
+protected:
+
+    const char* name_;
+    iSource& source_;
+    const char* const * v = nullptr;
+private:
+};
+
 
 #endif /* ITEM_H_ */

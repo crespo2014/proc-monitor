@@ -40,11 +40,11 @@ void CPUSource::load()
     } while (data_.next());
 }
 
-void CPUSource::getItems(std::vector<Item>& v)
+void CPUSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(Item(*it, *this));
+        v.push_back(BaseItem(*it, *this));
     }
 }
 
@@ -76,11 +76,11 @@ const char* const * MemSource::get(const char* name)
     return nullptr;
 }
 
-void MemSource::getItems(std::vector<Item>& v)
+void MemSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(Item(*it, *this));
+        v.push_back(BaseItem(*it, *this));
     }
 }
 
@@ -108,11 +108,11 @@ const char* const * IOSource::get(const char* name)
     return nullptr;
 }
 
-void IOSource::getItems(std::vector<Item>& v)
+void IOSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(Item(*it, *this));
+        v.push_back(BaseItem(*it, *this));
     }
 }
 

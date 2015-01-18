@@ -8,14 +8,29 @@
 #include "Item.h"
 #include "Source.h"
 
-
-void Item::bind()
+void BaseItem::bind()
 {
     v = source_.get(name_);
 }
 
-//Item::~Item()
-//{
-//    // TODO Auto-generated destructor stub
-//}
+BaseItem::BaseItem(const char* name, iSource& source) :
+        name_(name), source_(source)
+{
+}
 
+const char *BaseItem::get() const
+{
+    return ((v != nullptr) && (*v != nullptr) ? *v : "");
+}
+iSource& BaseItem::getSource() const
+{
+    return source_;
+}
+const char* BaseItem::getName() const
+{
+    return name_;
+}
+
+BaseItem::~BaseItem()
+{
+}
