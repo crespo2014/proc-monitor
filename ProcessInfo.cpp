@@ -76,11 +76,11 @@ void ProcessInfo::printItems(std::ostream& os)
 {
     auto it = active_items.begin();
     if (it != active_items.end())
-        os << (*it)->get();
+        os << (*it)->get(0);
     ++it;
     for (; it != active_items.end(); ++it)
     {
-        os << sep_c << (*it)->get();   //todo define separator as const
+        os << sep_c << (*it)->get(0);   //todo define separator as const
     }
     os << std::endl;
 }

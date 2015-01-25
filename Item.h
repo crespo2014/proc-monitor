@@ -16,7 +16,7 @@ class iItem
 {
 public:
     virtual void bind() = 0;
-    virtual const char *get() const = 0;
+    virtual const char *get(unsigned long long time)  = 0;
     virtual iSource& getSource() const = 0;
     virtual const char* getName() const = 0;
     virtual ~iItem() {};
@@ -29,7 +29,7 @@ public:
     /// Get pointer to value from source, read initial value
     void bind() override ;
     /// get current value as string
-    const char *get() const override ;
+    const char *get(unsigned long long time)  override ;
     iSource& getSource() const override;
     const char* getName() const override;
     virtual ~BaseItem();
@@ -39,6 +39,21 @@ protected:
     iSource& source_;
     const char* const * v = nullptr;
 private:
+};
+
+// Item that calculate speed, it uses time interval and factor
+class SpeedItem : public BaseItem
+{
+public:
+    SpeedItem(const char* name,iSource& src,unsigned interval = 1,float factor = 1.0);
+    // tell to item to pick value from source and calculate the new one
+    const char *get(unsigned long long time)  override ;
+private:
+    char val_[30];
+    float factor_;
+    unsigned interval_;
+    float acumulative_ = 0;
+    unsigned long long start_time_ = 0;
 };
 
 
