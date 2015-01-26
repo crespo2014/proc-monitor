@@ -112,7 +112,7 @@ void IOSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(BaseItem(*it, *this));
+        v.push_back(AcumulativetoSpeedItem(*it, *this,1000));       // clock is millisecond base
     }
 }
 

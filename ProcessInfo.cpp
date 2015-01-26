@@ -54,7 +54,7 @@ void ProcessInfo::bindAll()
     }
     for (auto i : active_items)
     {
-        i->bind();
+        i->bind(0);
     }
 }
 
