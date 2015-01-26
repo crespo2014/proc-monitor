@@ -14,8 +14,8 @@ void BaseItem::bind(unsigned long long time)
     v = source_.get(name_);
 }
 
-BaseItem::BaseItem(const char* name, iSource& source) :
-        name_(name), source_(source)
+BaseItem::BaseItem(const char* name, iSource& source,const char *display_name) :
+        name_(name), source_(source),display_name_(display_name)
 {
 }
 
@@ -25,7 +25,7 @@ iSource& BaseItem::getSource() const
 }
 const char* BaseItem::getName() const
 {
-    return name_;
+    return display_name_;
 }
 
 const char* BaseItem::get(unsigned long long time)
@@ -37,7 +37,7 @@ BaseItem::~BaseItem()
 {
 }
 
-SpeedItem::SpeedItem(const char* name, iSource& src, unsigned interval, float factor) : BaseItem(name,src),factor_(factor),interval_(interval)
+SpeedItem::SpeedItem(const char* name, iSource& src,const char *display_name, unsigned interval, float factor) : BaseItem(name,src,display_name),factor_(factor),interval_(interval)
 {
 }
 
@@ -58,7 +58,7 @@ const char* SpeedItem::get(unsigned long long time)
     return val_;
 }
 
-AcumulativetoSpeedItem::AcumulativetoSpeedItem(const char* name, iSource& src, unsigned interval, float factor) : BaseItem(name,src),factor_(factor),interval_(interval)
+AcumulativetoSpeedItem::AcumulativetoSpeedItem(const char* name, iSource& src,const char *display_name, unsigned interval, float factor) : BaseItem(name,src,display_name),factor_(factor),interval_(interval)
 {
 }
 

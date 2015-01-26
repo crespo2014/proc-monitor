@@ -44,7 +44,7 @@ void CPUSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(BaseItem(*it, *this));
+        v.push_back(BaseItem(*it, *this,*it));
     }
 }
 
@@ -80,7 +80,7 @@ void MemSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(BaseItem(*it, *this));
+        v.push_back(BaseItem(*it, *this,*it));
     }
 }
 
@@ -112,7 +112,7 @@ void IOSource::getItems(std::vector<BaseItem>& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(AcumulativetoSpeedItem(*it, *this,1000));       // clock is millisecond base
+        v.push_back(AcumulativetoSpeedItem(*it, *this,*it,1000));       // clock is millisecond base
     }
 }
 

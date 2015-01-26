@@ -22,7 +22,7 @@ public:
     void addItem(const char* item_name);
     void bindAll();
     void printHeader(std::ostream& os);
-    void printItems(std::ostream& os);
+    void printItems(std::ostream& os, unsigned long long t);
     void load();
 
 private:

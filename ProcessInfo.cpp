@@ -72,15 +72,15 @@ void ProcessInfo::printHeader(std::ostream& os)
     os << std::endl;
 }
 
-void ProcessInfo::printItems(std::ostream& os)
+void ProcessInfo::printItems(std::ostream& os, unsigned long long t)
 {
     auto it = active_items.begin();
     if (it != active_items.end())
-        os << (*it)->get(0);
+        os << (*it)->get(t);
     ++it;
     for (; it != active_items.end(); ++it)
     {
-        os << sep_c << (*it)->get(0);   //todo define separator as const
+        os << sep_c << (*it)->get(t);   //todo define separator as const
     }
     os << std::endl;
 }

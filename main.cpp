@@ -7,6 +7,7 @@
 
 #include <list>
 #include <vector>
+#include <chrono>
 #include "strbasic.h"
 #include <iostream>
 #include <sys/stat.h>
@@ -19,19 +20,21 @@
 
 int main()
 {
-    ProcessInfo self(getpid());
-
-    std::vector<const char*> names { "utime", "VmPeak","stime","rchar","wchar"};
+    ProcessInfo self(2879);
+    std::vector<const char*> names { "utime", "VmPeak","stime","rchar","wchar","read_bytes","write_bytes","syscr","syscr"};
     for (auto nm : names)
     {
         self.addItem(nm);
     }
+    auto start = std::chrono::high_resolution_clock::now();
     self.bindAll();
     self.printHeader(std::cout);
     //Running
     while (true)
     {
+        auto diff_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
         self.load();
-        self.printItems(std::cout);
+        std::cout << diff_ms.count() << ';';
+        self.printItems(std::cout,diff_ms.count());
     }
 }
