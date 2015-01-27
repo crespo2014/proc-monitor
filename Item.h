@@ -26,17 +26,16 @@ class BaseItem : public iItem
 {
 public:
     BaseItem(const char* name, iSource& source,const char *display_name);
-    /// Get pointer to value from source, read initial value
-    void bind(unsigned long long time) override ;
-    /// get current value as string
-    const char *get(unsigned long long time)  override ;
-    iSource& getSource() const override;
-    const char* getName() const override;       // get display name
+
+    virtual void bind(unsigned long long time) override ;        ///< Get pointer to value from source, read initial value
+    virtual const char *get(unsigned long long time)  override ; ///< get current value as string
+    virtual iSource& getSource() const override;
+    virtual const char* getName() const override;                ///< get display name
     virtual ~BaseItem();
 protected:
-    const char* display_name_;  // name use by user
     const char* name_;          // name on source
     iSource& source_;
+    const char* display_name_;  // name use by user
     const char* const * v = nullptr;
 private:
 };
@@ -46,10 +45,8 @@ class SpeedItem : public BaseItem
 {
 public:
     SpeedItem(const char* name,iSource& src,const char *display_name,unsigned interval = 1,float factor = 1.0);
-    // tell to item to pick value from source and calculate the new one
-    const char *get(unsigned long long time)  override ;
-    /// Get pointer to value from source, read initial value
-    void bind(unsigned long long time) override ;
+    virtual const char *get(unsigned long long time)  override ;        ///< tell to item to pick value from source and calculate the new one
+    virtual void bind(unsigned long long time) override ;               ///< Get pointer to value from source, read initial value
 private:
     char val_[30];
     float factor_;
@@ -63,10 +60,9 @@ class AcumulativetoSpeedItem : public BaseItem
 {
 public:
     AcumulativetoSpeedItem(const char* name,iSource& src,const char *display_name,unsigned interval = 1,float factor = 1.0);
-    // tell to item to pick value from source and calculate the new one
-    const char *get(unsigned long long time)  override ;
-    /// Get pointer to value from source, read initial value
-    void bind(unsigned long long time) override ;
+
+    virtual const char *get(unsigned long long time)  override ;    ///< tell to item to pick value from source and calculate the new one
+    virtual void bind(unsigned long long time) override ;           ///< Get pointer to value from source, read initial value
 private:
     char val_[30];
     float factor_;
