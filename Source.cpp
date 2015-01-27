@@ -10,6 +10,8 @@
 #include "memory.h"
 #include "Source.h"
 
+using namespace std;
+
 CPUSource::CPUSource() :
         iSource(source_e::cpu, proc_file_s), data_(' ')
 {
@@ -40,11 +42,11 @@ void CPUSource::load()
     } while (data_.next());
 }
 
-void CPUSource::getItems(std::vector<BaseItem>& v)
+void CPUSource::getItems(std::vector<std::shared_ptr<BaseItem> >& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(BaseItem(*it, *this,*it));
+        v.push_back(std::make_shared<BaseItem>(*it, *this,*it));
     }
 }
 
@@ -76,11 +78,11 @@ const char* const * MemSource::get(const char* name)
     return nullptr;
 }
 
-void MemSource::getItems(std::vector<BaseItem>& v)
+void MemSource::getItems(std::vector<std::shared_ptr<BaseItem> >& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(BaseItem(*it, *this,*it));
+        v.push_back(std::make_shared<BaseItem>(*it, *this,*it));
     }
 }
 
@@ -108,11 +110,11 @@ const char* const * IOSource::get(const char* name)
     return nullptr;
 }
 
-void IOSource::getItems(std::vector<BaseItem>& v)
+void IOSource::getItems(std::vector<std::shared_ptr<BaseItem> >& v)
 {
     for (const char** it = items_; *it != nullptr; ++it)
     {
-        v.push_back(AcumulativetoSpeedItem(*it, *this,*it,1000));       // clock is millisecond base
+        v.push_back(make_shared<AcumulativetoSpeedItem>(*it, *this,*it,1000));       // clock is millisecond base
     }
 }
 
@@ -123,3 +125,4 @@ void IOSource::load()
     {
     } while (data_.next());
 }
+

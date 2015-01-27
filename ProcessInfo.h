@@ -30,8 +30,8 @@ private:
     IOSource io_;
     MemSource mem_; //
     std::vector<std::pair<bool, iSource*> > sources_ { { false, &cpu_ }, { false, &io_ }, { false, &mem_ } };
-    std::vector<BaseItem> all_items_;
-    std::list<BaseItem*> active_items;
+    std::vector<std::shared_ptr<BaseItem> > all_items_;
+    std::list<std::shared_ptr<BaseItem> > active_items;
 
     unsigned pid_;
     constexpr static const char sep_c = ';';

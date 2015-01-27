@@ -24,21 +24,19 @@ ProcessInfo::~ProcessInfo()
 
 void ProcessInfo::addItem(const char* item_name)
 {
-    BaseItem* ni = nullptr;
     for (auto &it : all_items_)
     {
-        if (strcmp(it.getName(), item_name) == 0)
+        if (strcmp(it->getName(), item_name) == 0)
         {
-            ni = &it;
             for (auto& p : sources_)
             {
-                if (p.second->getType() == ni->getSource().getType())
+                if (p.second->getType() == it->getSource().getType())
                 {
                     p.first = true;
                     break;
                 }
             }
-            active_items.push_back(ni);
+            active_items.push_back(it);
             return;
         }
     }
